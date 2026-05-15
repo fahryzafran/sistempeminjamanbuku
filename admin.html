@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Admin</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      PerpusDigital
+    </a>
+
+    <div class="dynamic-navbar"></div>
+  </div>
+</nav>
+
+<section class="container">
+  <h1 class="section-title">
+    Dashboard Admin
+  </h1>
+
+  <p class="section-subtitle">
+    Kelola sistem perpustakaan
+  </p>
+
+  <div class="stats-grid" id="adminStats"></div>
+
+  <div style="height:32px;"></div>
+
+  <div class="dashboard-grid">
+
+    <aside class="sidebar">
+      <a href="admin.html">Dashboard</a>
+      <a href="books.html">Kelola Buku</a>
+      <a href="add-book.html">Tambah Buku</a>
+      <a href="users.html">Kelola User</a>
+      <a href="profile.html">Profil</a>
+    </aside>
+
+    <div class="card">
+      <h2>Panel Admin</h2>
+      <p style="margin-top:14px;color:#64748b;">
+        Gunakan sidebar untuk mengelola buku,
+        user, role admin/member, dan stok.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<script type="module" src="app.js"></script>
+
+<script type="module">
+await window.protectPage("admin");
+
+await window.renderNavbar();
+
+const books =
+  await window.getAllBooks();
+
+const users =
+  await window.getAllUsers();
+
+document.getElementById(
+  "adminStats"
+).innerHTML = `
+  <div class="stat-card">
+    <h2>${books.length}</h2>
+    <p>Total Buku</p>
+  </div>
+
+  <div class="stat-card">
+    <h2>${users.length}</h2>
+    <p>Total User</p>
+  </div>
+
+  <div class="stat-card">
+    <h2>${
+      users.filter(
+        user => user.role === "admin"
+      ).length
+    }</h2>
+    <p>Total Admin</p>
+  </div>
+`;
+</script>
+
+</body>
+<script type="module" src="app.js"></script>
+
+<script type="module">
+  await window.protectPage("admin");
+  await window.renderNavbar();
+</script>
+</html>

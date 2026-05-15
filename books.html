@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kelola Buku</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      PerpusDigital
+    </a>
+
+    <div class="dynamic-navbar"></div>
+  </div>
+</nav>
+
+<section class="container">
+  <h1 class="section-title">
+    Kelola Buku
+  </h1>
+
+  <p class="section-subtitle">
+    Edit dan hapus koleksi buku
+  </p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Judul</th>
+          <th>Penulis</th>
+          <th>Stok</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+
+      <tbody id="bookTableBody"></tbody>
+    </table>
+  </div>
+</section>
+
+<script type="module" src="app.js"></script>
+
+<script type="module">
+await window.protectPage("admin");
+
+await window.renderNavbar();
+
+const books =
+  await window.getAllBooks();
+
+const tableBody =
+  document.getElementById(
+    "bookTableBody"
+  );
+
+if (!books.length) {
+  tableBody.innerHTML = `
+    <tr>
+      <td colspan="4">
+        Belum ada buku.
+      </td>
+    </tr>
+  `;
+} else {
+  tableBody.innerHTML =
+    books.map(book => `
+      <tr>
+        <td>${book.title}</td>
+        <td>${book.author}</td>
+        <td>${book.stock}</td>
+
+        <td>
+          <a
+            href="edit-book.html?id=${book.id}"
+            class="btn btn-secondary"
+          >
+            Edit
+          </a>
+
+          <button
+            class="btn btn-danger"
+            onclick="deleteCurrentBook('${book.id}')"
+          >
+            Hapus
+          </button>
+        </td>
+      </tr>
+    `).join("");
+}
+
+window.deleteCurrentBook =
+  async function(bookId) {
+    const ok =
+      confirm(
+        "Hapus buku ini?"
+      );
+
+    if (!ok) return;
+
+    await window.deleteBook(bookId);
+
+    window.showToast(
+      "Buku dihapus"
+    );
+
+    setTimeout(() => {
+      location.reload();
+    }, 1000);
+  };
+</script>
+
+</body>
+</html>

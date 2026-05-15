@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Katalog Buku</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      PerpusDigital
+    </a>
+
+    <div class="dynamic-navbar"></div>
+  </div>
+</nav>
+
+<section class="container">
+  <h1 class="section-title">
+    Katalog Buku
+  </h1>
+
+  <p class="section-subtitle">
+    Jelajahi seluruh koleksi buku.
+  </p>
+
+  <div class="catalog-toolbar">
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="Cari buku..."
+    >
+
+    <select id="sortSelect">
+      <option value="">Urutkan</option>
+      <option value="az">Judul A-Z</option>
+      <option value="za">Judul Z-A</option>
+      <option value="stock">Stok</option>
+      <option value="year">Tahun</option>
+    </select>
+
+    <button
+      id="availableBtn"
+      class="btn btn-secondary"
+    >
+      Tersedia Saja
+    </button>
+  </div>
+
+  <div
+    id="catalogGrid"
+    class="catalog-grid"
+  ></div>
+</section>
+
+<script type="module" src="app.js"></script>
+
+<script type="module">
+await window.renderNavbar();
+
+const catalogGrid =
+  document.getElementById("catalogGrid");
+
+const searchInput =
+  document.getElementById("searchInput");
+
+const sortSelect =
+  document.getElementById("sortSelect");
+
+const availableBtn =
+  document.getElementById("availableBtn");
+
+let allBooks = [];
+let availableOnly = false;
+
+function renderBooks(books) {
+  if (!books.length) {
+    catalogGrid.innerHTML = `
+      <div class="card">
+        Tidak ada buku ditemukan.
+      </div>
+    `;
+    return;
+  }
+
+  catalogGrid.innerHTML = books.map(book => `
+    <div class="book-card">
+      <img
+        src="${book.coverUrl || 'https://via.placeholder.com/300x400'}"
+        class="book-cover"
+      >
+
+      <div class="book-body">
+        <div class="book-title">
+          ${book.title}
+        </div>
+
+        <div class="book-meta">
+          ${book.author}
+        </div>
+
+        <div class="book-stock">
+          Stok: ${book.stock}
+        </div>
+
+        <a
+          href="book-detail.html?id=${book.id}"
+          class="btn btn-primary"
+          style="margin-top:14px;"
+        >
+          Detail
+        </a>
+      </div>
+    </div>
+  `).join("");
+}
+
+function applyFilters() {
+  let books = [...allBooks];
+
+  books =
+    window.searchBooks(
+      books,
+      searchInput.value
+    );
+
+  books =
+    window.sortBooks(
+      books,
+      sortSelect.value
+    );
+
+  if (availableOnly) {
+    books =
+      window.filterAvailableBooks(books);
+  }
+
+  renderBooks(books);
+}
+
+allBooks =
+  await window.getAllBooks();
+
+renderBooks(allBooks);
+
+searchInput.addEventListener(
+  "input",
+  applyFilters
+);
+
+sortSelect.addEventListener(
+  "change",
+  applyFilters
+);
+
+availableBtn.addEventListener(
+  "click",
+  () => {
+    availableOnly = !availableOnly;
+    applyFilters();
+  }
+);
+</script>
+
+</body>
+</html>

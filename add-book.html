@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tambah Buku</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      PerpusDigital
+    </a>
+
+    <div class="dynamic-navbar"></div>
+  </div>
+</nav>
+
+<section class="container">
+  <div class="profile-card">
+    <h1 class="section-title">
+      Tambah Buku Baru
+    </h1>
+
+    <form id="addBookForm" class="auth-form">
+
+      <div class="form-group">
+        <label>Judul Buku</label>
+        <input
+          type="text"
+          id="title"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label>Penulis</label>
+        <input
+          type="text"
+          id="author"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label>Kategori</label>
+        <input
+          type="text"
+          id="category"
+        >
+      </div>
+
+      <div class="form-group">
+        <label>ISBN</label>
+        <input
+          type="text"
+          id="isbn"
+        >
+      </div>
+
+      <div class="form-group">
+        <label>Tahun</label>
+        <input
+          type="number"
+          id="year"
+        >
+      </div>
+
+      <div class="form-group">
+        <label>Stok</label>
+        <input
+          type="number"
+          id="stock"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label>Deskripsi</label>
+        <textarea
+          id="description"
+          rows="5"
+        ></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Cover Buku</label>
+        <input
+          type="file"
+          id="cover"
+          accept="image/*"
+          required
+        >
+      </div>
+
+      <img
+        id="coverPreview"
+        style="
+          width:220px;
+          border-radius:18px;
+          display:none;
+        "
+      >
+
+      <button
+        type="submit"
+        class="btn btn-primary full-btn"
+      >
+        Simpan Buku
+      </button>
+
+    </form>
+  </div>
+</section>
+
+<script type="module" src="app.js"></script>
+
+<script type="module">
+await window.protectPage("admin");
+
+await window.renderNavbar();
+
+const coverInput =
+  document.getElementById("cover");
+
+const preview =
+  document.getElementById(
+    "coverPreview"
+  );
+
+coverInput.addEventListener(
+  "change",
+  () => {
+    const file =
+      coverInput.files[0];
+
+    if (!file) return;
+
+    preview.src =
+      URL.createObjectURL(file);
+
+    preview.style.display =
+      "block";
+  }
+);
+
+document
+  .getElementById("addBookForm")
+  .addEventListener(
+    "submit",
+    async (e) => {
+      e.preventDefault();
+
+      try {
+        const file =
+          coverInput.files[0];
+
+        const coverUrl =
+          await window.uploadBookCover(
+            file
+          );
+
+        await window.addBook({
+          title:
+            document.getElementById(
+              "title"
+            ).value.trim(),
+
+          author:
+            document.getElementById(
+              "author"
+            ).value.trim(),
+
+          category:
+            document.getElementById(
+              "category"
+            ).value.trim(),
+
+          isbn:
+            document.getElementById(
+              "isbn"
+            ).value.trim(),
+
+          year:
+            Number(
+              document.getElementById(
+                "year"
+              ).value
+            ),
+
+          stock:
+            Number(
+              document.getElementById(
+                "stock"
+              ).value
+            ),
+
+          description:
+            document.getElementById(
+              "description"
+            ).value.trim(),
+
+          coverUrl
+        });
+
+        window.showToast(
+          "Buku berhasil ditambahkan"
+        );
+
+        setTimeout(() => {
+          window.location.href =
+            "books.html";
+        }, 1000);
+
+      } catch (error) {
+        console.error(error);
+
+        window.showToast(
+          error.message,
+          "error"
+        );
+      }
+    }
+  );
+</script>
+
+</body>
+</html>

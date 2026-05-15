@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kelola User</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      PerpusDigital
+    </a>
+
+    <div class="dynamic-navbar"></div>
+  </div>
+</nav>
+
+<section class="container">
+  <h1 class="section-title">
+    Kelola User
+  </h1>
+
+  <p class="section-subtitle">
+    Ubah role admin/member dan status akun
+  </p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Nama</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+
+      <tbody id="userTableBody"></tbody>
+    </table>
+  </div>
+</section>
+
+<script type="module" src="app.js"></script>
+
+<script type="module">
+await window.protectPage("admin");
+
+await window.renderNavbar();
+
+const users =
+  await window.getAllUsers();
+
+const tbody =
+  document.getElementById(
+    "userTableBody"
+  );
+
+tbody.innerHTML =
+  users.map(user => `
+    <tr>
+      <td>${user.name || "-"}</td>
+      <td>${user.email || "-"}</td>
+      <td>${user.role}</td>
+      <td>
+        ${
+          user.isActive
+            ? `<span class="badge badge-success">Aktif</span>`
+            : `<span class="badge badge-danger">Nonaktif</span>`
+        }
+      </td>
+
+      <td style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button
+          class="btn btn-secondary"
+          onclick="toggleRole('${user.id}','${user.role}')"
+        >
+          ${
+            user.role === "admin"
+              ? "Jadikan Member"
+              : "Jadikan Admin"
+          }
+        </button>
+
+        <button
+          class="btn btn-danger"
+          onclick="toggleStatus('${user.id}',${user.isActive})"
+        >
+          ${
+            user.isActive
+              ? "Disable"
+              : "Enable"
+          }
+        </button>
+      </td>
+    </tr>
+  `).join("");
+
+window.toggleRole =
+  async function(uid, currentRole) {
+    const newRole =
+      currentRole === "admin"
+        ? "member"
+        : "admin";
+
+    await window.setUserRole(
+      uid,
+      newRole
+    );
+
+    window.showToast(
+      "Role diperbarui"
+    );
+
+    setTimeout(() => {
+      location.reload();
+    }, 1000);
+  };
+
+window.toggleStatus =
+  async function(uid, currentStatus) {
+    await window.setUserStatus(
+      uid,
+      !currentStatus
+    );
+
+    window.showToast(
+      "Status diperbarui"
+    );
+
+    setTimeout(() => {
+      location.reload();
+    }, 1000);
+  };
+</script>
+
+</body>
+</html>

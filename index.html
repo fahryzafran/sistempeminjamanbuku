@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PerpusDigital</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      PerpusDigital
+    </a>
+
+    <div class="dynamic-navbar"></div>
+  </div>
+</nav>
+
+<section class="hero">
+  <h1>
+    Sistem Perpustakaan Digital Modern
+  </h1>
+
+  <p>
+    Pinjam buku, kelola koleksi,
+    sistem antrian, histori aktivitas,
+    dan dashboard admin modern.
+  </p>
+
+  <div class="hero-actions">
+    <a
+      href="catalog.html"
+      class="btn btn-primary"
+    >
+      Jelajahi Katalog
+    </a>
+
+    <a
+      href="register.html"
+      class="btn btn-secondary"
+      id="registerHeroBtn"
+    >
+      Buat Akun
+    </a>
+  </div>
+</section>
+
+<section class="container">
+  <h2 class="section-title">
+    Fitur Utama
+  </h2>
+
+  <p class="section-subtitle">
+    Dibangun dengan Firebase + struktur data.
+  </p>
+
+  <div class="stats-grid">
+
+    <div class="stat-card">
+      <h2>Queue</h2>
+      <p>
+        Sistem antrian buku FIFO
+        saat stok habis.
+      </p>
+    </div>
+
+    <div class="stat-card">
+      <h2>Stack</h2>
+      <p>
+        Riwayat aktivitas terbaru
+        ditampilkan paling atas.
+      </p>
+    </div>
+
+    <div class="stat-card">
+      <h2>Search</h2>
+      <p>
+        Cari buku berdasarkan judul,
+        penulis, kategori, ISBN.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<script type="module" src="app.js"></script>
+
+<script type="module">
+await window.renderNavbar();
+await auth.authStateReady();
+
+if (auth.currentUser) {
+  const btn =
+    document.getElementById(
+      "registerHeroBtn"
+    );
+
+  if (btn) {
+    btn.style.display = "none";
+  }
+}
+</script>
+
+</body>
+</html>

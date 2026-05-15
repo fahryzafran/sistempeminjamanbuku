@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Member</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      PerpusDigital
+    </a>
+
+    <div class="dynamic-navbar"></div>
+  </div>
+</nav>
+
+<section class="container">
+  <h1 class="section-title">
+    Dashboard Member
+  </h1>
+
+  <p class="section-subtitle">
+    Aktivitas peminjaman Anda
+  </p>
+
+<div class="stats-grid" id="memberStats">
+  <div class="stat-card">
+    <h2 id="borrowCount">0</h2>
+    <p>Sedang Dipinjam</p>
+  </div>
+
+  <div class="stat-card">
+    <h2 id="historyCount">0</h2>
+    <p>Riwayat</p>
+  </div>
+
+  <div class="stat-card">
+    <h2 id="genreCount">0</h2>
+    <p>Genre Buku</p>
+  </div>
+</div>
+
+
+  <div style="height:32px;"></div>
+
+  <h2 class="section-title">
+    Buku Sedang Dipinjam
+  </h2>
+
+  <div
+    id="borrowList"
+    class="catalog-grid"
+  ></div>
+
+  <div style="height:32px;"></div>
+
+  <h2 class="section-title">
+    Riwayat Aktivitas
+  </h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Aksi</th>
+          <th>Book ID</th>
+        </tr>
+      </thead>
+
+      <tbody id="historyBody"></tbody>
+    </table>
+  </div>
+</section>
+
+<script type="module" src="app.js"></script>
+
+
+<script type="module">
+await window.protectPage("member");
+
+await window.renderNavbar();
+
+const borrowings =
+  await window.getMyBorrowings();
+
+const history =
+  await window.getMyHistory();
+
+const books =
+  await window.getAllBooks();
+
+const genres =
+  [
+    ...new Set(
+      books
+        .map(book => book.category)
+        .filter(Boolean)
+    )
+  ];
+
+document.getElementById(
+  "borrowCount"
+).textContent =
+  borrowings.length;
+
+document.getElementById(
+  "historyCount"
+).textContent =
+  history.length;
+
+document.getElementById(
+  "genreCount"
+).textContent =
+  genres.length;
+
+const borrowList =
+  document.getElementById(
+    "borrowList"
+  );
+
+if (!borrowings.length) {
+  borrowList.innerHTML = `
+    <div class="card">
+      Belum ada buku dipinjam.
+    </div>
+  `;
+} else {
+  for (const borrow of borrowings) {
+    const book =
+      await window.getBookById(
+        borrow.bookId
+      );
+
+    if (!book) continue;
+
+    borrowList.innerHTML += `
+      <div class="book-card">
+        <img
+          src="${
+            book.coverUrl ||
+            'https://via.placeholder.com/300x400'
+          }"
+          class="book-cover"
+        >
+
+        <div class="book-body">
+          <div class="book-title">
+            ${book.title}
+          </div>
+
+          <div class="book-meta">
+            ${book.author}
+          </div>
+
+          <button
+            class="btn btn-danger"
+            onclick="returnCurrentBook('${borrow.id}','${book.id}')"
+          >
+            Return
+          </button>
+        </div>
+      </div>
+    `;
+  }
+}
+
+window.returnCurrentBook =
+  async function(
+    borrowingId,
+    bookId
+  ) {
+    await window.returnBook(
+      borrowingId,
+      bookId
+    );
+
+    window.showToast(
+      "Buku dikembalikan"
+    );
+
+    setTimeout(() => {
+      location.reload();
+    }, 1000);
+  };
+
+document.getElementById(
+  "historyBody"
+).innerHTML =
+  history.map(item => `
+    <tr>
+      <td>${item.action}</td>
+      <td>${item.bookId}</td>
+    </tr>
+  `).join("");
+</script>
+
+</body>
+</html> 

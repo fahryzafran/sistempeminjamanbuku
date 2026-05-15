@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - PerpusDigital</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="auth-wrapper">
+  <div class="auth-card">
+
+    <h1>Login</h1>
+    <p>Masuk ke akun perpustakaan digital.</p>
+
+    <form id="loginForm">
+
+      <div class="form-group">
+        <label>Email</label>
+        <input
+          type="email"
+          id="loginEmail"
+          placeholder="Masukkan email"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <input
+          type="password"
+          id="loginPassword"
+          placeholder="Masukkan password"
+          required
+        >
+      </div>
+
+      <div style="text-align:right; margin-bottom:16px;">
+        <a
+          href="#"
+          onclick="resetPassword()"
+          style="color:var(--primary); font-size:14px; font-weight:600;"
+        >
+          Lupa password?
+        </a>
+      </div>
+
+      <button
+        type="submit"
+        class="btn-primary"
+        style="width:100%;"
+      >
+        Login
+      </button>
+
+    </form>
+
+    <button
+      onclick="loginWithGoogle()"
+      class="btn-secondary"
+      style="width:100%; margin-top:14px;"
+    >
+      Masuk dengan Google
+    </button>
+
+    <p style="margin-top:22px; text-align:center;">
+      Belum punya akun?
+      <a
+        href="register.html"
+        style="color:var(--primary); font-weight:700;"
+      >
+        Daftar
+      </a>
+    </p>
+
+  </div>
+</div>
+
+<script type="module" src="app.js"></script>
+
+</body>
+</html>

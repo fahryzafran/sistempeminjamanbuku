@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detail Buku</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      PerpusDigital
+    </a>
+
+    <div class="dynamic-navbar"></div>
+  </div>
+</nav>
+
+<section class="container">
+  <div
+    id="bookDetail"
+    class="card"
+  >
+    Memuat...
+  </div>
+</section>
+
+<script type="module" src="app.js"></script>
+
+<script type="module">
+await window.renderNavbar();
+
+const params =
+  new URLSearchParams(
+    window.location.search
+  );
+
+const bookId = params.get("id");
+
+const detailBox =
+  document.getElementById("bookDetail");
+
+const book =
+  await window.getBookById(bookId);
+
+if (!book) {
+  detailBox.innerHTML = `
+    Buku tidak ditemukan.
+  `;
+} else {
+  detailBox.innerHTML = `
+    <div style="
+      display:grid;
+      grid-template-columns:320px 1fr;
+      gap:28px;
+      align-items:start;
+    ">
+      <img
+        src="${book.coverUrl || 'https://via.placeholder.com/300x400'}"
+        class="book-cover"
+        style="height:420px;"
+      >
+
+      <div>
+        <h1 style="font-size:42px;">
+          ${book.title}
+        </h1>
+
+        <p style="
+          color:#64748b;
+          margin:14px 0;
+        ">
+          ${book.author}
+        </p>
+
+        <p><strong>Kategori:</strong> ${book.category || "-"}</p>
+        <p><strong>ISBN:</strong> ${book.isbn || "-"}</p>
+        <p><strong>Tahun:</strong> ${book.year || "-"}</p>
+        <p><strong>Stok:</strong> ${book.stock}</p>
+
+        <p style="
+          margin-top:20px;
+          line-height:1.8;
+        ">
+          ${book.description || "Tidak ada deskripsi"}
+        </p>
+
+        <div style="
+          margin-top:24px;
+          display:flex;
+          gap:14px;
+          flex-wrap:wrap;
+        ">
+          <button
+            id="borrowBtn"
+            class="btn btn-primary"
+          >
+            Pinjam Buku
+          </button>
+
+          <button
+            id="queueBtn"
+            class="btn btn-secondary"
+          >
+            Gabung Antrian
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document
+    .getElementById("borrowBtn")
+    .addEventListener(
+      "click",
+      async () => {
+        try {
+          await window.borrowBook(bookId);
+
+          window.showToast(
+            "Buku berhasil dipinjam"
+          );
+
+          setTimeout(() => {
+            location.reload();
+          }, 1000);
+
+        } catch (error) {
+          window.showToast(
+            error.message,
+            "error"
+          );
+        }
+      }
+    );
+
+  document
+    .getElementById("queueBtn")
+    .addEventListener(
+      "click",
+      async () => {
+        try {
+          await window.joinQueue(bookId);
+
+          window.showToast(
+            "Berhasil masuk antrian"
+          );
+
+        } catch (error) {
+          window.showToast(
+            error.message,
+            "error"
+          );
+        }
+      }
+    );
+}
+</script>
+
+</body>
+</html>
