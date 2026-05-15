@@ -13,77 +13,93 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div class="auth-page">
+    <div class="auth-card">
 
-<div class="auth-wrapper">
-  <div class="auth-card">
-
-    <h1>Login</h1>
-    <p>Masuk ke akun perpustakaan digital.</p>
-
-    <form id="loginForm">
-
-      <div class="form-group">
-        <label>Email</label>
-        <input
-          type="email"
-          id="loginEmail"
-          placeholder="Masukkan email"
-          required
-        >
+      <div class="auth-brand">
+        <h1>Login</h1>
+        <p>Masuk ke akun perpustakaan digital.</p>
       </div>
 
-      <div class="form-group">
-        <label>Password</label>
-        <input
-          type="password"
-          id="loginPassword"
-          placeholder="Masukkan password"
-          required
-        >
-      </div>
+      <form
+        class="auth-form"
+        onsubmit="login(event)"
+      >
+        <div class="form-group">
+          <label>Email</label>
+          <input
+            type="email"
+            id="email"
+            placeholder="Masukkan email"
+            required
+          >
+        </div>
 
-      <div style="text-align:right; margin-bottom:16px;">
-        <a
-          href="#"
+        <div class="form-group">
+          <label>Password</label>
+          <input
+            type="password"
+            id="password"
+            placeholder="Masukkan password"
+            required
+          >
+        </div>
+
+        <button
+          type="button"
+          class="link-btn"
           onclick="resetPassword()"
-          style="color:var(--primary); font-size:14px; font-weight:600;"
         >
           Lupa password?
-        </a>
+        </button>
+
+        <button
+          type="submit"
+          class="btn btn-primary full-btn"
+        >
+          Login
+        </button>
+
+        <button
+          type="button"
+          onclick="window.loginWithGoogle()"
+          class="btn btn-google full-btn"
+        >
+          Masuk dengan Google
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        Belum punya akun?
+        <a href="register.html">Daftar</a>
       </div>
 
-      <button
-        type="submit"
-        class="btn-primary"
-        style="width:100%;"
-      >
-        Login
-      </button>
-
-    </form>
-
-    <button
-      onclick="loginWithGoogle()"
-      class="btn-secondary"
-      style="width:100%; margin-top:14px;"
-    >
-      Masuk dengan Google
-    </button>
-
-    <p style="margin-top:22px; text-align:center;">
-      Belum punya akun?
-      <a
-        href="register.html"
-        style="color:var(--primary); font-weight:700;"
-      >
-        Daftar
-      </a>
-    </p>
-
+    </div>
   </div>
-</div>
 
-<script type="module" src="app.js"></script>
+  <script type="module" src="app.js"></script>
 
+  <script>
+    async function login(e) {
+      e.preventDefault();
+
+      await window.loginUser(
+        document.getElementById("email").value,
+        document.getElementById("password").value
+      );
+    }
+
+    async function resetPassword() {
+      const email =
+        document.getElementById("email").value;
+
+      if (!email) {
+        window.showToast("Isi email dulu", "error");
+        return;
+      }
+
+      await window.resetUserPassword(email);
+    }
+  </script>
 </body>
 </html>
