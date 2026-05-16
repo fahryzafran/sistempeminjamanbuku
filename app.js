@@ -527,7 +527,7 @@ window.renderNavbar = async function() {
    BORROW SYSTEM
 ========================================= */
 window.borrowBook = async function(bookId) {
-  const user = await window.getCurrentUserData();
+  const user = auth.currentUser;
 
   if (!user) {
     throw new Error("Silakan login dulu");
