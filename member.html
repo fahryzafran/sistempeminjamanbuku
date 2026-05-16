@@ -207,25 +207,36 @@ if (!history.length) {
     </tr>
   `;
 } else {
+  const sortedHistory =
+    history.sort((a, b) => {
+      const dateA =
+        a.borrowedAt?.seconds || 0;
+
+      const dateB =
+        b.borrowedAt?.seconds || 0;
+
+      return dateB - dateA;
+    });
+
   const rows = await Promise.all(
-    history.map(async (item) => {
+    sortedHistory.map(async (item) => {
       const book =
         await window.getBookById(
           item.bookId
         );
 
       const borrowDate =
-        item.createdAt?.toDate
-          ? item.createdAt
-              .toDate()
-              .toLocaleDateString("id-ID")
+        item.borrowedAt?.seconds
+          ? new Date(
+              item.borrowedAt.seconds * 1000
+            ).toLocaleDateString("id-ID")
           : "-";
 
       const returnDate =
-        item.returnDate?.toDate
-          ? item.returnDate
-              .toDate()
-              .toLocaleDateString("id-ID")
+        item.returnedAt?.seconds
+          ? new Date(
+              item.returnedAt.seconds * 1000
+            ).toLocaleDateString("id-ID")
           : "-";
 
       return `
@@ -236,9 +247,9 @@ if (!history.length) {
 
           <td>
             ${
-              item.action === "borrow"
-                ? "Dipinjam"
-                : "Dikembalikan"
+              item.returned
+                ? "Dikembalikan"
+                : "Dipinjam"
             }
           </td>
 
