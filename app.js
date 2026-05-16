@@ -539,6 +539,23 @@ window.borrowBook = async function(bookId) {
     throw new Error("Buku tidak ditemukan");
   }
 
+   /* cek apakah user sudah pinjam buku ini */
+const existingBorrowQuery = query(
+  collection(db, "borrowings"),
+  where("userId", "==", user.uid),
+  where("bookId", "==", bookId),
+  where("returned", "==", false)
+);
+
+const existingBorrowSnap =
+  await getDocs(existingBorrowQuery);
+
+if (!existingBorrowSnap.empty) {
+  throw new Error(
+    "Anda sudah meminjam buku ini"
+  );
+}
+
   if (book.stock <= 0) {
     throw new Error("Stok habis");
   }
