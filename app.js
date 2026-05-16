@@ -49,7 +49,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyD3CrN0DWnJJC2b5R34oxegNuLOzyx_kOA",
   authDomain: "peminjaman-perpus.firebaseapp.com",
   projectId: "peminjaman-perpus",
-  storageBucket: "peminjaman-perpus.firebasestorage.app",
+  storageBucket: "peminjaman-perpus.appspot.com",
   messagingSenderId: "419840349108",
   appId: "1:419840349108:web:743149e778ef151cab98e1"
 };
