@@ -409,12 +409,13 @@ window.updateProfileName = async function(name) {
     throw new Error("User tidak login");
   }
 
-  await updateDoc(
-    doc(db, "users", user.uid),
-    {
-      name
-    }
-  );
+   await updateDoc(
+     doc(db, "borrowings", borrowingId),
+     {
+       returned: true,
+       returnedAt: serverTimestamp()
+     }
+   );
 };
 
 /* =========================================
@@ -578,12 +579,13 @@ window.returnBook = async function(
   const book =
     await window.getBookById(bookId);
 
-  await updateDoc(
-    doc(db, "borrowings", borrowingId),
-    {
-      returned: true
-    }
-  );
+   await updateDoc(
+     doc(db, "borrowings", borrowingId),
+     {
+       returned: true,
+       returnedAt: serverTimestamp()
+     }
+   );
 
   await updateBook(bookId, {
     stock: (book.stock || 0) + 1
