@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tambah Buku</title>
+  <title>Edit Buku</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -27,94 +27,65 @@
 <section class="container">
   <div class="profile-card">
     <h1 class="section-title">
-      Tambah Buku Baru
+      Edit Buku
     </h1>
 
-    <form id="addBookForm" class="auth-form">
+    <form id="editBookForm" class="auth-form">
 
       <div class="form-group">
         <label>Judul Buku</label>
-        <input
-          type="text"
-          id="title"
-          required
-        >
+        <input type="text" id="title" required>
       </div>
 
       <div class="form-group">
         <label>Penulis</label>
-        <input
-          type="text"
-          id="author"
-          required
-        >
+        <input type="text" id="author" required>
       </div>
 
       <div class="form-group">
         <label>Kategori</label>
-        <input
-          type="text"
-          id="category"
-        >
+        <input type="text" id="category">
       </div>
 
       <div class="form-group">
         <label>ISBN</label>
-        <input
-          type="text"
-          id="isbn"
-        >
+        <input type="text" id="isbn">
       </div>
 
       <div class="form-group">
         <label>Tahun</label>
-        <input
-          type="number"
-          id="year"
-        >
+        <input type="number" id="year">
       </div>
 
       <div class="form-group">
         <label>Stok</label>
-        <input
-          type="number"
-          id="stock"
-          required
-        >
+        <input type="number" id="stock" required>
       </div>
 
       <div class="form-group">
         <label>Deskripsi</label>
-        <textarea
-          id="description"
-          rows="5"
-        ></textarea>
+        <textarea id="description" rows="5"></textarea>
       </div>
 
       <div class="form-group">
-        <label>Cover Buku</label>
+        <label>URL Cover Buku</label>
         <input
-          type="file"
-          id="cover"
-          accept="image/*"
-          required
+          type="url"
+          id="coverUrl"
+          placeholder="https://example.com/cover.jpg"
+        >
+
+        <img
+          id="coverPreview"
+          style="width: 220px; margin-top: 20px; border-radius: 12px;"
         >
       </div>
-
-      <img
-        id="coverPreview"
-        style="
-          width:220px;
-          border-radius:18px;
-          display:none;
-        "
-      >
 
       <button
         type="submit"
         class="btn btn-primary full-btn"
       >
-        Simpan Buku
+        Update Buku
       </button>
 
     </form>
@@ -125,111 +96,114 @@
 
 <script type="module">
 await window.protectPage("admin");
-
 await window.renderNavbar();
 
-const coverInput =
-  document.getElementById("cover");
+const params = new URLSearchParams(window.location.search);
+const bookId = params.get("id");
+
+if (!bookId) {
+  window.showToast("ID buku tidak ditemukan", "error");
+  setTimeout(() => {
+    window.location.href = "books.html";
+  }, 1500);
+}
+
+const coverUrlInput =
+  document.getElementById("coverUrl");
 
 const preview =
-  document.getElementById(
-    "coverPreview"
-  );
+  document.getElementById("coverPreview");
 
-coverInput.addEventListener(
-  "change",
-  () => {
-    const file =
-      coverInput.files[0];
+preview.style.display = "none";
 
-    if (!file) return;
+coverUrlInput.addEventListener("input", () => {
+  const url = coverUrlInput.value.trim();
 
-    preview.src =
-      URL.createObjectURL(file);
-
-    preview.style.display =
-      "block";
+  if (!url) {
+    preview.style.display = "none";
+    return;
   }
-);
+
+  preview.src = url;
+  preview.style.display = "block";
+});
+
+/* load data buku */
+const book =
+  await window.getBookById(bookId);
+
+document.getElementById("title").value =
+  book.title || "";
+
+document.getElementById("author").value =
+  book.author || "";
+
+document.getElementById("category").value =
+  book.category || "";
+
+document.getElementById("isbn").value =
+  book.isbn || "";
+
+document.getElementById("year").value =
+  book.year || "";
+
+document.getElementById("stock").value =
+  book.stock || "";
+
+document.getElementById("description").value =
+  book.description || "";
+
+coverUrlInput.value =
+  book.coverUrl || "";
+
+if (book.coverUrl) {
+  preview.src = book.coverUrl;
+  preview.style.display = "block";
+}
 
 document
-  .getElementById("addBookForm")
-  .addEventListener(
-    "submit",
-    async (e) => {
-      e.preventDefault();
+  .getElementById("editBookForm")
+  .addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-      try {
-        const file =
-          coverInput.files[0];
+    try {
+      await window.updateBook(bookId, {
+        title:
+          document.getElementById("title").value.trim(),
 
-        const coverUrl =
-          await window.uploadBookCover(
-            file
-          );
+        author:
+          document.getElementById("author").value.trim(),
 
-        await window.addBook({
-          title:
-            document.getElementById(
-              "title"
-            ).value.trim(),
+        category:
+          document.getElementById("category").value.trim(),
 
-          author:
-            document.getElementById(
-              "author"
-            ).value.trim(),
+        isbn:
+          document.getElementById("isbn").value.trim(),
 
-          category:
-            document.getElementById(
-              "category"
-            ).value.trim(),
+        year:
+          Number(document.getElementById("year").value),
 
-          isbn:
-            document.getElementById(
-              "isbn"
-            ).value.trim(),
+        stock:
+          Number(document.getElementById("stock").value),
 
-          year:
-            Number(
-              document.getElementById(
-                "year"
-              ).value
-            ),
+        description:
+          document.getElementById("description").value.trim(),
 
-          stock:
-            Number(
-              document.getElementById(
-                "stock"
-              ).value
-            ),
+        coverUrl:
+          coverUrlInput.value.trim()
+      });
 
-          description:
-            document.getElementById(
-              "description"
-            ).value.trim(),
+      window.showToast("Buku berhasil diupdate");
 
-          coverUrl
-        });
+      setTimeout(() => {
+        window.location.href = "books.html";
+      }, 1000);
 
-        window.showToast(
-          "Buku berhasil ditambahkan"
-        );
-
-        setTimeout(() => {
-          window.location.href =
-            "books.html";
-        }, 1000);
-
-      } catch (error) {
-        console.error(error);
-
-        window.showToast(
-          error.message,
-          "error"
-        );
-      }
+    } catch (error) {
+      console.error(error);
+      window.showToast(error.message, "error");
     }
-  );
+  });
 </script>
 
 </body>
