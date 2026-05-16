@@ -558,12 +558,14 @@ window.borrowBook = async function(bookId) {
     stock: book.stock - 1
   });
 
-  await addDoc(collection(db, "history"), {
-    userId: user.uid,
-    bookId,
-    action: "borrow",
-    timestamp: serverTimestamp()
-  });
+   await addDoc(collection(db, "history"), {
+     userId: user.uid,
+     bookId,
+     action: "borrow",
+     status: "Dipinjam",
+     borrowedAt: serverTimestamp(),
+     returnedAt: null
+   });
 };
 
 /* =========================================
@@ -590,12 +592,14 @@ window.returnBook = async function(
   const user =
     await window.getCurrentUserData();
 
-  await addDoc(collection(db, "history"), {
-    userId: user.uid,
-    bookId,
-    action: "return",
-    timestamp: serverTimestamp()
-  });
+   await addDoc(collection(db, "history"), {
+     userId: user.uid,
+     bookId,
+     action: "return",
+     status: "Dikembalikan",
+     borrowedAt: null,
+     returnedAt: serverTimestamp()
+   });
 
   await window.processQueue(bookId);
 };
@@ -689,8 +693,7 @@ window.getMyHistory =
       await getDocs(
         query(
           collection(db, "history"),
-          where("userId", "==", user.uid),
-          orderBy("timestamp", "desc")
+          where("userId", "==", user.uid)
         )
       );
 
