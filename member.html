@@ -210,10 +210,16 @@ if (!history.length) {
   const sortedHistory =
     history.sort((a, b) => {
       const dateA =
-        a.borrowedAt?.seconds || 0;
+        a.borrowedAt?.toDate?.()?.getTime()
+        ||
+        a.returnedAt?.toDate?.()?.getTime()
+        || 0;
 
       const dateB =
-        b.borrowedAt?.seconds || 0;
+        b.borrowedAt?.toDate?.()?.getTime()
+        ||
+        b.returnedAt?.toDate?.()?.getTime()
+        || 0;
 
       return dateB - dateA;
     });
@@ -221,40 +227,27 @@ if (!history.length) {
   const rows = await Promise.all(
     sortedHistory.map(async (item) => {
       const book =
-        await window.getBookById(
-          item.bookId
-        );
+        await window.getBookById(item.bookId);
 
       const borrowDate =
-        item.borrowedAt?.seconds
-          ? new Date(
-              item.borrowedAt.seconds * 1000
-            ).toLocaleDateString("id-ID")
+        item.borrowedAt?.toDate
+          ? item.borrowedAt
+              .toDate()
+              .toLocaleDateString("id-ID")
           : "-";
 
       const returnDate =
-        item.returnedAt?.seconds
-          ? new Date(
-              item.returnedAt.seconds * 1000
-            ).toLocaleDateString("id-ID")
+        item.returnedAt?.toDate
+          ? item.returnedAt
+              .toDate()
+              .toLocaleDateString("id-ID")
           : "-";
 
       return `
         <tr>
-          <td>
-            ${book?.title || "Buku tidak ditemukan"}
-          </td>
-
-          <td>
-            ${
-              item.returned
-                ? "Dikembalikan"
-                : "Dipinjam"
-            }
-          </td>
-
+          <td>${book?.title || "Buku tidak ditemukan"}</td>
+          <td>${item.status}</td>
           <td>${borrowDate}</td>
-
           <td>${returnDate}</td>
         </tr>
       `;
