@@ -92,24 +92,25 @@
       </div>
 
       <div class="form-group">
-        <label>URL Cover Buku</label>
+      <label>URL Cover Buku</label>
         <input
           type="url"
           id="coverUrl"
           placeholder="https://example.com/cover.jpg"
-          >
+        >
       
         <img
           id="coverPreview"
           style="width: 220px; margin-top: 20px; border-radius: 12px;"
         >
-
+      </div>
+      
       <button
         type="submit"
         class="btn btn-primary full-btn"
       >
         Simpan Buku
-      </button>
+    </button>
 
     </form>
   </div>
@@ -119,111 +120,56 @@
 
 <script type="module">
 await window.protectPage("admin");
-
 await window.renderNavbar();
 
-const coverInput =
-  document.getElementById("cover");
+const coverUrlInput =
+  document.getElementById("coverUrl");
 
 const preview =
-  document.getElementById(
-    "coverPreview"
-  );
+  document.getElementById("coverPreview");
 
-coverInput.addEventListener(
-  "change",
-  () => {
-    const file =
-      coverInput.files[0];
+preview.style.display = "none";
 
-    if (!file) return;
+coverUrlInput.addEventListener("input", () => {
+  const url = coverUrlInput.value.trim();
 
-    preview.src =
-      URL.createObjectURL(file);
-
-    preview.style.display =
-      "block";
+  if (!url) {
+    preview.style.display = "none";
+    return;
   }
-);
+
+  preview.src = url;
+  preview.style.display = "block";
+});
 
 document
   .getElementById("addBookForm")
-  .addEventListener(
-    "submit",
-    async (e) => {
-      e.preventDefault();
+  .addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-      try {
-        const file =
-          coverInput.files[0];
+    try {
+      await window.addBook({
+        title: document.getElementById("title").value.trim(),
+        author: document.getElementById("author").value.trim(),
+        category: document.getElementById("category").value.trim(),
+        isbn: document.getElementById("isbn").value.trim(),
+        year: Number(document.getElementById("year").value),
+        stock: Number(document.getElementById("stock").value),
+        description: document.getElementById("description").value.trim(),
+        coverUrl: coverUrlInput.value.trim()
+      });
 
-        const coverUrl =
-          await window.uploadBookCover(
-            file
-          );
+      window.showToast("Buku berhasil ditambahkan");
 
-        await window.addBook({
-          title:
-            document.getElementById(
-              "title"
-            ).value.trim(),
+      setTimeout(() => {
+        window.location.href = "books.html";
+      }, 1000);
 
-          author:
-            document.getElementById(
-              "author"
-            ).value.trim(),
-
-          category:
-            document.getElementById(
-              "category"
-            ).value.trim(),
-
-          isbn:
-            document.getElementById(
-              "isbn"
-            ).value.trim(),
-
-          year:
-            Number(
-              document.getElementById(
-                "year"
-              ).value
-            ),
-
-          stock:
-            Number(
-              document.getElementById(
-                "stock"
-              ).value
-            ),
-
-          description:
-            document.getElementById(
-              "description"
-            ).value.trim(),
-
-          coverUrl
-        });
-
-        window.showToast(
-          "Buku berhasil ditambahkan"
-        );
-
-        setTimeout(() => {
-          window.location.href =
-            "books.html";
-        }, 1000);
-
-      } catch (error) {
-        console.error(error);
-
-        window.showToast(
-          error.message,
-          "error"
-        );
-      }
+    } catch (error) {
+      console.error(error);
+      window.showToast(error.message, "error");
     }
-  );
+  });
 </script>
 
 </body>
