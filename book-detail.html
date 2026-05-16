@@ -36,6 +36,7 @@
 <script type="module" src="app.js"></script>
 
 <script type="module">
+await window.protectPage("member");
 await window.renderNavbar();
 
 const params =
@@ -99,69 +100,89 @@ if (!book) {
           gap:14px;
           flex-wrap:wrap;
         ">
-          <button
-            id="borrowBtn"
-            class="btn btn-primary"
-          >
-            Pinjam Buku
-          </button>
-
-          <button
-            id="queueBtn"
-            class="btn btn-secondary"
-          >
-            Gabung Antrian
-          </button>
+        <button
+          id="borrowBtn"
+          class="btn btn-primary"
+        >
+          Pinjam Buku
+        </button>
+        
+        <button
+          id="queueBtn"
+          class="btn btn-secondary"
+          style="display:none;"
+        >
+          Gabung Antrian
+        </button>
         </div>
       </div>
     </div>
   `;
+  
+const borrowBtn =
+  document.getElementById("borrowBtn");
 
-  document
-    .getElementById("borrowBtn")
-    .addEventListener(
-      "click",
-      async () => {
-        try {
-          await window.borrowBook(bookId);
+const queueBtn =
+  document.getElementById("queueBtn");
 
-          window.showToast(
-            "Buku berhasil dipinjam"
-          );
+/* cek stok */
+if (book.stock <= 0) {
+  borrowBtn.style.display = "none";
+  queueBtn.style.display = "inline-block";
+} else {
+  borrowBtn.style.display = "inline-block";
+  queueBtn.style.display = "none";
+}
 
-          setTimeout(() => {
-            location.reload();
-          }, 1000);
-
-        } catch (error) {
-          window.showToast(
-            error.message,
-            "error"
-          );
-        }
-      }
+/* tombol pinjam */
+borrowBtn.addEventListener(
+  "click",
+  async () => {
+    const ok = confirm(
+      `Yakin ingin meminjam "${book.title}" ?`
     );
 
-  document
-    .getElementById("queueBtn")
-    .addEventListener(
-      "click",
-      async () => {
-        try {
-          await window.joinQueue(bookId);
+    if (!ok) return;
 
-          window.showToast(
-            "Berhasil masuk antrian"
-          );
+    try {
+      await window.borrowBook(book.id);
 
-        } catch (error) {
-          window.showToast(
-            error.message,
-            "error"
-          );
-        }
-      }
-    );
+      window.showToast(
+        "Buku berhasil dipinjam"
+      );
+
+      setTimeout(() => {
+        location.reload();
+      }, 1000);
+
+    } catch (error) {
+      window.showToast(
+        error.message,
+        "error"
+      );
+    }
+  }
+);
+
+/* tombol antrian */
+queueBtn.addEventListener(
+  "click",
+  async () => {
+    try {
+      await window.joinQueue(book.id);
+
+      window.showToast(
+        "Berhasil masuk antrian"
+      );
+
+    } catch (error) {
+      window.showToast(
+        error.message,
+        "error"
+      );
+    }
+  }
+);
 }
 </script>
 
