@@ -65,6 +65,40 @@ const db = getFirestore(app);
 const storage = getStorage(app);
 const googleProvider = new GoogleAuthProvider();
 
+/* =========================================
+   AUTO LOGOUT IF IDLE 5 HOURS
+========================================= */
+const IDLE_TIMEOUT = 5 * 60 * 60 * 1000; // 5 jam
+let idleTimer;
+
+function resetIdleTimer() {
+  clearTimeout(idleTimer);
+
+  idleTimer = setTimeout(async () => {
+    if (auth.currentUser) {
+      showToast("Sesi habis karena tidak ada aktivitas. Login ulang.", "error");
+
+      await signOut(auth);
+
+      setTimeout(() => {
+        window.location.href = "login.html";
+      }, 1500);
+    }
+  }, IDLE_TIMEOUT);
+}
+
+/* aktivitas yang reset timer */
+["mousemove", "keydown", "click", "scroll", "touchstart"].forEach(event => {
+  document.addEventListener(event, resetIdleTimer);
+});
+
+/* cek login */
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    resetIdleTimer();
+  }
+});
+
 /* GLOBAL EXPORT */
 window.auth = auth;
 window.db = db;
