@@ -195,15 +195,64 @@ window.returnCurrentBook =
     }, 1000);
   };
 
-document.getElementById(
-  "historyBody"
-).innerHTML =
-  history.map(item => `
+const historyBody =
+  document.getElementById("historyBody");
+
+if (!history.length) {
+  historyBody.innerHTML = `
     <tr>
-      <td>${item.action}</td>
-      <td>${item.bookId}</td>
+      <td colspan="4">
+        Belum ada riwayat aktivitas.
+      </td>
     </tr>
-  `).join("");
+  `;
+} else {
+  const rows = await Promise.all(
+    history.map(async (item) => {
+      const book =
+        await window.getBookById(
+          item.bookId
+        );
+
+      const borrowDate =
+        item.createdAt?.toDate
+          ? item.createdAt
+              .toDate()
+              .toLocaleDateString("id-ID")
+          : "-";
+
+      const returnDate =
+        item.returnDate?.toDate
+          ? item.returnDate
+              .toDate()
+              .toLocaleDateString("id-ID")
+          : "-";
+
+      return `
+        <tr>
+          <td>
+            ${book?.title || "Buku tidak ditemukan"}
+          </td>
+
+          <td>
+            ${
+              item.action === "borrow"
+                ? "Dipinjam"
+                : "Dikembalikan"
+            }
+          </td>
+
+          <td>${borrowDate}</td>
+
+          <td>${returnDate}</td>
+        </tr>
+      `;
+    })
+  );
+
+  historyBody.innerHTML =
+    rows.join("");
+}
 </script>
 
 </body>
