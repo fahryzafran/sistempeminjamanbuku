@@ -409,13 +409,12 @@ window.updateProfileName = async function(name) {
     throw new Error("User tidak login");
   }
 
-   await updateDoc(
-     doc(db, "borrowings", borrowingId),
-     {
-       returned: true,
-       returnedAt: serverTimestamp()
-     }
-   );
+  await updateDoc(
+    doc(db, "users", user.uid),
+    {
+      name
+    }
+  );
 };
 
 /* =========================================
@@ -879,3 +878,4 @@ window.filterAvailableBooks =
     return;
   }
 };
+
