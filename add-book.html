@@ -92,23 +92,17 @@
       </div>
 
       <div class="form-group">
-        <label>Cover Buku</label>
+        <label>URL Cover Buku</label>
         <input
-          type="file"
-          id="cover"
-          accept="image/*"
-          required
+          type="url"
+          id="coverUrl"
+          placeholder="https://example.com/cover.jpg"
+          >
+      
+        <img
+          id="coverPreview"
+          style="width: 220px; margin-top: 20px; border-radius: 12px;"
         >
-      </div>
-
-      <img
-        id="coverPreview"
-        style="
-          width:220px;
-          border-radius:18px;
-          display:none;
-        "
-      >
 
       <button
         type="submit"
