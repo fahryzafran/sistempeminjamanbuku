@@ -287,7 +287,7 @@ window.loginWithGoogle = async function () {
 /* =========================================
    FORGOT PASSWORD
 ========================================= */
-window.resetPassword = async function(email) {
+window.resetUserPassword = async function(email) {
   await sendPasswordResetEmail(
     auth,
     email
