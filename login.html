@@ -98,23 +98,13 @@ document
       }, 1000);
 
     } catch (error) {
+  catch (error) {
   console.error(error);
 
-  if (
-    error.code === "auth/invalid-credential" ||
-    error.code === "auth/user-not-found" ||
-    error.code === "auth/wrong-password"
-  ) {
-    window.showToast(
-      "Email atau password salah",
-      "error"
-    );
-  } else {
-    window.showToast(
-      "Login gagal, coba lagi",
-      "error"
-    );
-  }
+  window.showToast(
+    "Email atau password salah",
+    "error"
+  );
 }
   });
 
