@@ -98,9 +98,24 @@ document
       }, 1000);
 
     } catch (error) {
-      console.error(error);
-      window.showToast(error.message, "error");
-    }
+  console.error(error);
+
+  if (
+    error.code === "auth/invalid-credential" ||
+    error.code === "auth/user-not-found" ||
+    error.code === "auth/wrong-password"
+  ) {
+    window.showToast(
+      "Email atau password salah",
+      "error"
+    );
+  } else {
+    window.showToast(
+      "Login gagal, coba lagi",
+      "error"
+    );
+  }
+}
   });
 
 async function resetPassword() {
