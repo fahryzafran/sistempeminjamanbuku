@@ -98,14 +98,13 @@ document
       }, 1000);
 
     } catch (error) {
-  catch (error) {
-  console.error(error);
+      console.error(error);
 
-  window.showToast(
-    "Email atau password salah",
-    "error"
-  );
-}
+      window.showToast(
+        "Email atau password salah",
+        "error"
+      );
+    }
   });
 
 async function resetPassword() {
@@ -113,15 +112,27 @@ async function resetPassword() {
     document.getElementById("email").value;
 
   if (!email) {
-    window.showToast("Isi email dulu", "error");
+    window.showToast(
+      "Isi email dulu",
+      "error"
+    );
     return;
   }
 
   try {
     await window.resetUserPassword(email);
-    window.showToast("Email reset password dikirim");
+
+    window.showToast(
+      "Email reset password dikirim"
+    );
+
   } catch (error) {
-    window.showToast(error.message, "error");
+    console.error(error);
+
+    window.showToast(
+      "Gagal mengirim email reset",
+      "error"
+    );
   }
 }
 </script>
